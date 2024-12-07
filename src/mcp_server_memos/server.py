@@ -20,6 +20,7 @@ class MemosTools(str, Enum):
 class Visibility(str, Enum):
     PUBLIC = "PUBLIC"
     PROTECTED = "PROTECTED"
+    PRIVATE = "PRIVATE"
 
     def to_proto(self):
         return memos_api_v1.Visibility.from_string(self.value)
@@ -47,7 +48,7 @@ class CreateMemoRequest(BaseModel):
     ]
     visibility: Annotated[
         Visibility,
-        Field(default=Visibility.PUBLIC, description="""The visibility of the memo."""),
+        Field(default=Visibility.PRIVATE, description="""The visibility of the memo."""),
     ]
 
 
@@ -78,7 +79,7 @@ Format: memos/{id}. Use "memos/-" to list all tags.
     ]
     visibility: Annotated[
         Visibility,
-        Field(default=Visibility.PUBLIC, description="""The visibility of the tags."""),
+        Field(default=Visibility.PRIVATE, description="""The visibility of the tags."""),
     ]
 
 
