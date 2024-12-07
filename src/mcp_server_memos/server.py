@@ -21,6 +21,9 @@ class Visibility(str, Enum):
     PUBLIC = "PUBLIC"
     PROTECTED = "PROTECTED"
 
+    def to_proto(self):
+        return memos_api_v1.Visibility.from_string(self.value)
+
 
 class SearchMemoRequest(BaseModel):
     """Request to search memo"""
@@ -110,7 +113,7 @@ class MemoServiceToolAdapter:
 
         req = memos_api_v1.CreateMemoRequest(
             content=params.content,
-            visibility=params.visibility.value,
+            visibility=params.visibility.to_proto(),
         )
         res = await self.memo_service.create_memo(create_memo_request=req)
         content = f"Memo created: {res.id}"
