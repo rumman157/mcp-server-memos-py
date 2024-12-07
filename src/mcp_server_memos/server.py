@@ -10,7 +10,7 @@ from .proto_gen.memos.api import v1 as memos_api_v1
 async def new_server(config: Config) -> Server:
     grpc_channel = Channel(config.host, config.port)
     memo_service = memos_api_v1.MemoServiceStub(grpc_channel)
-    server = Server()
+    server = Server("mcp-server-memos")
 
     @server.list_tools()
     async def list_tools() -> list[types.Tool]:
