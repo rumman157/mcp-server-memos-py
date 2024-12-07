@@ -1,0 +1,10 @@
+version: v2
+managed:
+  enabled: true
+plugins:
+  # Google's official protoc-gen-python is rubbish. Use betterproto instead.
+  # Only V2 support proto3 optional fields. Need install with `pip install --pre`.
+  # https://github.com/danielgtaylor/python-betterproto/issues/574
+  - local: protoc-gen-python_betterproto
+    # https://github.com/danielgtaylor/python-betterproto
+    out: ../src/mcp_server_memos/proto_gen
