@@ -15,6 +15,43 @@ class Visibility(Enum):
     PROTECTED = "PROTECTED"
 
 
+class SearchMemoRequest(BaseModel):
+    """Request to search memo"""
+
+    key_word: Annotated[
+        str,
+        Field(
+            description="""The key words to search for in the memo content.""",
+        ),
+    ]
+
+
+class CreateMemoRequest(BaseModel):
+    """Request to create memo"""
+
+    content: Annotated[
+        str,
+        Field(
+            description="""The content of the memo.""",
+        ),
+    ]
+    visibility: Annotated[
+        Visibility,
+        Field(default=Visibility.PUBLIC, description="""The visibility of the memo."""),
+    ]
+
+
+class GetMemoRequest(BaseModel):
+    """Request to get memo"""
+
+    name: Annotated[
+        str,
+        Field(description="""The name of the memo.
+Format: memos/{id}
+"""),
+    ]
+
+
 class ListMemoTagsRequest(BaseModel):
     """Request to list memo tags"""
 
@@ -48,24 +85,50 @@ def new_server(config: Config) -> Server:
             )
         ]
 
-    # # search
-    # @server.call_tool()
-    # def search_memo(search_memo_request: memos_api_v1.SearchMemoRequest):
-    #     memo_service.list_memos(
-    #         list_memos_request=memos_api_v1.ListMemosRequest(filter=f"")
-    #     )
+    # search
+    @server.call_tool()
+    async def search_memo(name: str, args: dict) -> list[types.TextContent]:
+        try:
+            params = SearchMemoRequest.model_validate(args)
+        except Exception as e:
+            raise McpError(types.INVALID_PARAMS, str(e))
 
-    # # create
-    # @server.call_tool()
-    # async def create_memo(create_memo_request: memos_api_v1.CreateMemoRequest):
-    #     memo_service.create_memo(
-    #         create_memo_request=memos_api_v1.CreateMemoRequest(content="Hello, Memos!")
-    #     )
+        req = memos_api_v1.ListMemosRequest(
+            filter=f"row_status == 'NORMAL' && content_search == ['{params.key_word}']"
+        )
+        res = await memo_service.list_memos(list_memos_request=req)
+        content = ", ".join([memo.content for memo in res.memos])
+        content = f"Search result:\n{content}"
+        return [types.TextContent(type="text", text=content)]
 
-    # # get
-    # @server.call_tool()
-    # async def get_memo(get_memo_request: memos_api_v1.GetMemoRequest):
-    #     memo_service.get_memo(get_memo_request=memos_api_v1.GetMemoRequest(id="1"))
+    # create
+    @server.call_tool()
+    async def create_memo(name: str, args: dict) -> list[types.TextContent]:
+        try:
+            params = CreateMemoRequest.model_validate(args)
+        except Exception as e:
+            raise McpError(types.INVALID_PARAMS, str(e))
+
+        req = memos_api_v1.CreateMemoRequest(
+            content=params.content,
+            visibility=params.visibility.value,
+        )
+        res = await memo_service.create_memo(create_memo_request=req)
+        content = f"Memo created: {res.id}"
+        return [types.TextContent(type="text", text=content)]
+
+    # get
+    @server.call_tool()
+    async def get_memo(name: str, args: dict) -> list[types.TextContent]:
+        try:
+            params = GetMemoRequest.model_validate(args)
+        except Exception as e:
+            raise McpError(types.INVALID_PARAMS, str(e))
+        
+        req = memos_api_v1.GetMemoRequest(name=params.name)
+        res = await memo_service.get_memo(get_memo_request=req)
+        content = f"Memo:\n{res.content}"
+        return [types.TextContent(type="text", text=content)]
 
     # list tags
     @server.call_tool()
