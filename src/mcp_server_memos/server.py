@@ -10,7 +10,14 @@ from .config import Config
 from .proto_gen.memos.api import v1 as memos_api_v1
 
 
-class Visibility(Enum):
+class MemosTools(str, Enum):
+    LIST_MEMO_TAGS = "list_memo_tags"
+    SEARCH_MEMO = "search_memo"
+    CREATE_MEMO = "create_memo"
+    GET_MEMO = "get_memo"
+
+
+class Visibility(str, Enum):
     PUBLIC = "PUBLIC"
     PROTECTED = "PROTECTED"
 
@@ -46,9 +53,11 @@ class GetMemoRequest(BaseModel):
 
     name: Annotated[
         str,
-        Field(description="""The name of the memo.
+        Field(
+            description="""The name of the memo.
 Format: memos/{id}
-"""),
+"""
+        ),
     ]
 
 
@@ -70,24 +79,15 @@ Format: memos/{id}. Use "memos/-" to list all tags.
     ]
 
 
-def new_server(config: Config) -> Server:
-    grpc_channel = Channel(config.host, config.port)
-    memo_service = memos_api_v1.MemoServiceStub(grpc_channel)
-    server = Server("mcp-server-memos")
+class MemoServiceToolAdapter:
+    memo_service: memos_api_v1.MemoServiceStub
 
-    @server.list_tools()
-    async def list_tools() -> list[types.Tool]:
-        return [
-            types.Tool(
-                name="list_memo_tags",
-                description="List all existing memo tags",
-                inputSchema=ListMemoTagsRequest.model_json_schema(),
-            )
-        ]
+    def __init__(self, config: Config):
+        grpc_channel = Channel(config.host, config.port)
+        self.memo_service = memos_api_v1.MemoServiceStub(grpc_channel)
 
     # search
-    @server.call_tool()
-    async def search_memo(name: str, args: dict) -> list[types.TextContent]:
+    async def search_memo(self, args: dict) -> list[types.TextContent]:
         try:
             params = SearchMemoRequest.model_validate(args)
         except Exception as e:
@@ -96,14 +96,13 @@ def new_server(config: Config) -> Server:
         req = memos_api_v1.ListMemosRequest(
             filter=f"row_status == 'NORMAL' && content_search == ['{params.key_word}']"
         )
-        res = await memo_service.list_memos(list_memos_request=req)
+        res = await self.memo_service.list_memos(list_memos_request=req)
         content = ", ".join([memo.content for memo in res.memos])
         content = f"Search result:\n{content}"
         return [types.TextContent(type="text", text=content)]
 
     # create
-    @server.call_tool()
-    async def create_memo(name: str, args: dict) -> list[types.TextContent]:
+    async def create_memo(self, args: dict) -> list[types.TextContent]:
         try:
             params = CreateMemoRequest.model_validate(args)
         except Exception as e:
@@ -113,26 +112,24 @@ def new_server(config: Config) -> Server:
             content=params.content,
             visibility=params.visibility.value,
         )
-        res = await memo_service.create_memo(create_memo_request=req)
+        res = await self.memo_service.create_memo(create_memo_request=req)
         content = f"Memo created: {res.id}"
         return [types.TextContent(type="text", text=content)]
 
     # get
-    @server.call_tool()
-    async def get_memo(name: str, args: dict) -> list[types.TextContent]:
+    async def get_memo(self, args: dict) -> list[types.TextContent]:
         try:
             params = GetMemoRequest.model_validate(args)
         except Exception as e:
             raise McpError(types.INVALID_PARAMS, str(e))
-        
+
         req = memos_api_v1.GetMemoRequest(name=params.name)
-        res = await memo_service.get_memo(get_memo_request=req)
+        res = await self.memo_service.get_memo(get_memo_request=req)
         content = f"Memo:\n{res.content}"
         return [types.TextContent(type="text", text=content)]
 
     # list tags
-    @server.call_tool()
-    async def list_memo_tags(name: str, args: dict) -> list[types.TextContent]:
+    async def list_memo_tags(self, args: dict) -> list[types.TextContent]:
         try:
             params = ListMemoTagsRequest.model_validate(args)
         except Exception as e:
@@ -142,10 +139,54 @@ def new_server(config: Config) -> Server:
             parent=params.parent,
             filter=f"visibilities == ['{params.visibility.value}']",
         )
-        res = await memo_service.list_memo_tags(list_memo_tags_request=req)
+        res = await self.memo_service.list_memo_tags(list_memo_tags_request=req)
         content = ", ".join(res.tag_amounts.keys())
         content = f"Tags:\n{content}"
         return [types.TextContent(type="text", text=content)]
+
+
+def new_server(config: Config) -> Server:
+    tool_adapter = MemoServiceToolAdapter(config)
+    server = Server("mcp-server-memos")
+
+    @server.list_tools()
+    async def list_tools() -> list[types.Tool]:
+        return [
+            types.Tool(
+                name=MemosTools.SEARCH_MEMO,
+                description="Search for memos",
+                inputSchema=SearchMemoRequest.model_json_schema(),
+            ),
+            types.Tool(
+                name=MemosTools.CREATE_MEMO,
+                description="Create a new memo",
+                inputSchema=CreateMemoRequest.model_json_schema(),
+            ),
+            types.Tool(
+                name=MemosTools.GET_MEMO,
+                description="Get a memo",
+                inputSchema=GetMemoRequest.model_json_schema(),
+            ),
+            types.Tool(
+                name=MemosTools.LIST_MEMO_TAGS,
+                description="List all existing memo tags",
+                inputSchema=ListMemoTagsRequest.model_json_schema(),
+            ),
+        ]
+
+    # search
+    @server.call_tool()
+    async def call_tool(name: str, args: dict) -> list[types.TextContent]:
+        if name == MemosTools.SEARCH_MEMO:
+            return await tool_adapter.search_memo(args)
+        elif name == MemosTools.CREATE_MEMO:
+            return await tool_adapter.create_memo(args)
+        elif name == MemosTools.GET_MEMO:
+            return await tool_adapter.get_memo(args)
+        elif name == MemosTools.LIST_MEMO_TAGS:
+            return await tool_adapter.list_memo_tags(args)
+        else:
+            raise McpError(types.INVALID_PARAMS, f"Unknown tool: {name}")
 
     return server
 
