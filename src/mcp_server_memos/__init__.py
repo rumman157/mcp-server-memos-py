@@ -25,9 +25,8 @@ def main():
         port=args.port,
         token=args.token,
     )
-    server = new_server(config=config)
 
-    asyncio.run(serve_stdio(server))
+    asyncio.run(serve_stdio(config=config))
 
 
 if __name__ == "__main__":

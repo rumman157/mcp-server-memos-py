@@ -52,7 +52,8 @@ async def new_server(config: Config) -> Server:
     return server
 
 
-async def serve_stdio(server: Server):
+async def serve_stdio(config: Config):
+    server = await new_server(config)
     options = server.create_initialization_options()
     async with stdio_server() as (read_stream, write_stream):
         await server.run(read_stream, write_stream, options, raise_exceptions=True)
