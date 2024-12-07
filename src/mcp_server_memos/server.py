@@ -86,8 +86,9 @@ class MemoServiceToolAdapter:
     memo_service: memos_api_v1.MemoServiceStub
 
     def __init__(self, config: Config):
-        grpc_channel = Channel(config.host, config.port)
-        self.memo_service = memos_api_v1.MemoServiceStub(grpc_channel)
+        metadata = {"authorization": f"Bearer {config.token}"}
+        channel = Channel(config.host, config.port)
+        self.memo_service = memos_api_v1.MemoServiceStub(channel, metadata=metadata)
 
     # search
     async def search_memo(self, args: dict) -> list[types.TextContent]:

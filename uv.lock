@@ -273,7 +273,7 @@ wheels = [
 
 [[package]]
 name = "mcp-server-memos"
-version = "0.1.12"
+version = "0.1.13"
 source = { editable = "." }
 dependencies = [
     { name = "betterproto", extra = ["compiler"] },
