@@ -1,13 +1,13 @@
 from grpclib.client import Channel
 from mcp import stdio_server, types
 from mcp.server import Server
-from pydantic import BaseModel
+from pydantic import TypeAdapter
 
 from .config import Config
 from .proto_gen.memos.api import v1 as memos_api_v1
 
 
-async def new_server(config: Config) -> Server:
+def new_server(config: Config) -> Server:
     grpc_channel = Channel(config.host, config.port)
     memo_service = memos_api_v1.MemoServiceStub(grpc_channel)
     server = Server("mcp-server-memos")
@@ -18,7 +18,7 @@ async def new_server(config: Config) -> Server:
             types.Tool(
                 name="list_memo_tags",
                 description="List all existing memo tags",
-                inputSchema=memos_api_v1.ListMemoTagsRequest,
+                inputSchema=TypeAdapter(memos_api_v1.ListMemoTagsRequest).json_schema(),
             )
         ]
 
@@ -43,17 +43,21 @@ async def new_server(config: Config) -> Server:
 
     # list tags
     @server.call_tool()
-    async def list_memo_tags(list_memo_tags_request: memos_api_v1.ListMemoTagsRequest):
+    async def list_memo_tags(list_memo_tags_request: memos_api_v1.ListMemoTagsRequest) -> list[types.TextContent]:
         print("list_memo_tags, list_memo_tags_request:", list_memo_tags_request)
-        memo_service.list_memo_tags(
+        await memo_service.list_memo_tags(
             list_memo_tags_request=memos_api_v1.ListMemoTagsRequest(parent="memo/-")
         )
+        return [
+            types.TextContent(text="tag1"),
+        ]
     
     return server
 
 
 async def serve_stdio(config: Config):
-    server = await new_server(config)
+    server = new_server(config)
     options = server.create_initialization_options()
+    print("serve_stdio, options:", options)
     async with stdio_server() as (read_stream, write_stream):
         await server.run(read_stream, write_stream, options, raise_exceptions=True)
