@@ -1,6 +1,6 @@
 [project]
 name = "mcp-server-memos"
-version = "0.1.1"
+version = "0.1.2"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -20,7 +20,7 @@ classifiers = [
 ]
 
 [project.scripts]
-mcp-server-memos = "mcp_server_memos.cli:main"
+mcp-server-memos = "mcp_server_memos:main"
 
 [project.urls]
 Repository = "https://github.com/RyoJerryYu/mcp-server-memos-py"
