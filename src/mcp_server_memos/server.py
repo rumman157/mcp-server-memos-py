@@ -1,7 +1,8 @@
+from enum import Enum
 from typing import Annotated
 
 from grpclib.client import Channel
-from mcp import stdio_server, types
+from mcp import McpError, stdio_server, types
 from mcp.server import Server
 from pydantic import BaseModel, Field, TypeAdapter
 
@@ -9,19 +10,27 @@ from .config import Config
 from .proto_gen.memos.api import v1 as memos_api_v1
 
 
+class Visibility(Enum):
+    PUBLIC = "PUBLIC"
+    PROTECTED = "PROTECTED"
+
+
 class ListMemoTagsRequest(BaseModel):
     """Request to list memo tags"""
-    parent: Annotated[str, Field(
-        default="memo/-",
-        description="""The parent, who owns the tags.
+
+    parent: Annotated[
+        str,
+        Field(
+            default="memo/-",
+            description="""The parent, who owns the tags.
 Format: memos/{id}. Use "memos/-" to list all tags.
 """,
-    )]
-    filter: Annotated[str, Field(
-        description="""Filter is used to filter memos.
-Format: "creator == 'users/{uid}' && visibilities == ['PUBLIC', 'PROTECTED']"
-""",
-    )]
+        ),
+    ]
+    visibility: Annotated[
+        Visibility,
+        Field(default=Visibility.PUBLIC, description="""The visibility of the tags."""),
+    ]
 
 
 def new_server(config: Config) -> Server:
@@ -60,15 +69,21 @@ def new_server(config: Config) -> Server:
 
     # list tags
     @server.call_tool()
-    async def list_memo_tags(list_memo_tags_request: memos_api_v1.ListMemoTagsRequest) -> list[types.TextContent]:
-        # print("list_memo_tags, list_memo_tags_request:", list_memo_tags_request)
-        await memo_service.list_memo_tags(
-            list_memo_tags_request=memos_api_v1.ListMemoTagsRequest(parent="memo/-")
+    async def list_memo_tags(name: str, args: dict) -> list[types.TextContent]:
+        try:
+            params = ListMemoTagsRequest.model_validate(args)
+        except Exception as e:
+            raise McpError(types.INVALID_PARAMS, str(e))
+
+        req = memos_api_v1.ListMemoTagsRequest(
+            parent=params.parent,
+            filter=f"visibilities == ['{params.visibility.value}']",
         )
-        return [
-            types.TextContent(text="tag1"),
-        ]
-    
+        res = await memo_service.list_memo_tags(list_memo_tags_request=req)
+        content = ", ".join(res.tag_amounts.keys())
+        content = f"Tags:\n{content}"
+        return [types.TextContent(type="text", text=content)]
+
     return server
 
 
