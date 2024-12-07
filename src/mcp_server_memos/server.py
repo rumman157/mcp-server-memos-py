@@ -1,10 +1,27 @@
+from typing import Annotated
+
 from grpclib.client import Channel
 from mcp import stdio_server, types
 from mcp.server import Server
-from pydantic import TypeAdapter
+from pydantic import BaseModel, Field, TypeAdapter
 
 from .config import Config
 from .proto_gen.memos.api import v1 as memos_api_v1
+
+
+class ListMemoTagsRequest(BaseModel):
+    """Request to list memo tags"""
+    parent: Annotated[str, Field(
+        default="memo/-",
+        description="""The parent, who owns the tags.
+Format: memos/{id}. Use "memos/-" to list all tags.
+""",
+    )]
+    filter: Annotated[str, Field(
+        description="""Filter is used to filter memos.
+Format: "creator == 'users/{uid}' && visibilities == ['PUBLIC', 'PROTECTED']"
+""",
+    )]
 
 
 def new_server(config: Config) -> Server:
@@ -18,7 +35,7 @@ def new_server(config: Config) -> Server:
             types.Tool(
                 name="list_memo_tags",
                 description="List all existing memo tags",
-                inputSchema=TypeAdapter(memos_api_v1.ListMemoTagsRequest).json_schema(),
+                inputSchema=ListMemoTagsRequest.model_json_schema(),
             )
         ]
 
