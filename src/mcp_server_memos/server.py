@@ -21,7 +21,7 @@ class ListMemoTagsRequest(BaseModel):
     parent: Annotated[
         str,
         Field(
-            default="memo/-",
+            default="memos/-",
             description="""The parent, who owns the tags.
 Format: memos/{id}. Use "memos/-" to list all tags.
 """,
