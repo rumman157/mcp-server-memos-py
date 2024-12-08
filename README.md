@@ -92,20 +92,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - [Memos](https://github.com/usememos/memos) - A lightweight, self-hosted memo hub
-- [MCP (Model Control Protocol)](https://github.com/mcp-plugins) - Protocol for LLM model control
-```
-
-This README includes:
-
-1. Project title with an emoji
-2. Shields.io badges for PyPI version, Python version, and license
-3. Brief description with links to related projects
-4. Features section with emojis
-5. Installation instructions
-6. Usage examples for both CLI and library use
-7. Configuration table
-8. Contributing section
-9. License information
-10. Acknowledgments
-
-The badges will automatically update based on your PyPI package and GitHub repository information. You may need to adjust some of the URLs and badge parameters to match your actual repository and package details.
+- [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) - Protocol for LLM model applications
