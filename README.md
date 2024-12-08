@@ -92,18 +92,6 @@ This MCP server provides the following tools for interacting with Memos:
 | `create_memo` | Create a new memo | - `content`: The content of the memo<br>- `visibility`: Memo visibility (PUBLIC/PROTECTED/PRIVATE, default: PRIVATE) |
 | `get_memo` | Get a specific memo by ID | - `name`: The name/ID of the memo (format: memos/{id}) |
 
-### Example Usage
-
-```jsonc
-{
-  "name": "create_memo",
-  "args": {
-    "content": "My new memo content",
-    "visibility": "PRIVATE"
-  }
-}
-```
-
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
