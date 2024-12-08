@@ -3,41 +3,33 @@
 # plugin: python-betterproto
 # This file has been @generated
 import warnings
-from typing import TYPE_CHECKING
-
-
-if TYPE_CHECKING:
-    from dataclasses import dataclass
-else:
-    from pydantic.dataclasses import dataclass
-
+from dataclasses import dataclass
 from datetime import datetime
 from typing import (
+    TYPE_CHECKING,
     Dict,
     List,
     Optional,
 )
 
 import betterproto
-import betterproto.lib.pydantic.google.protobuf as betterproto_lib_pydantic_google_protobuf
+import betterproto.lib.google.protobuf as betterproto_lib_google_protobuf
 import grpclib
 from betterproto.grpc.grpclib_server import ServiceBase
-from pydantic import model_validator
-from pydantic.dataclasses import rebuild_dataclass
 
 from ....google import api as ___google_api__
+
+
+if TYPE_CHECKING:
+    import grpclib.server
+    from betterproto.grpc.grpclib_client import MetadataLike
+    from grpclib.metadata import Deadline
 
 
 class RowStatus(betterproto.Enum):
     UNSPECIFIED = 0
     ACTIVE = 1
     ARCHIVED = 2
-
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        from pydantic_core import core_schema
-
-        return core_schema.int_schema(ge=0)
 
 
 class UserRole(betterproto.Enum):
@@ -46,22 +38,10 @@ class UserRole(betterproto.Enum):
     ADMIN = 2
     USER = 3
 
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        from pydantic_core import core_schema
-
-        return core_schema.int_schema(ge=0)
-
 
 class IdentityProviderType(betterproto.Enum):
     TYPE_UNSPECIFIED = 0
     OAUTH2 = 1
-
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        from pydantic_core import core_schema
-
-        return core_schema.int_schema(ge=0)
 
 
 class InboxStatus(betterproto.Enum):
@@ -69,23 +49,11 @@ class InboxStatus(betterproto.Enum):
     UNREAD = 1
     ARCHIVED = 2
 
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        from pydantic_core import core_schema
-
-        return core_schema.int_schema(ge=0)
-
 
 class InboxType(betterproto.Enum):
     TYPE_UNSPECIFIED = 0
     MEMO_COMMENT = 1
     VERSION_UPDATE = 2
-
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        from pydantic_core import core_schema
-
-        return core_schema.int_schema(ge=0)
 
 
 class NodeType(betterproto.Enum):
@@ -120,23 +88,11 @@ class NodeType(betterproto.Enum):
     REFERENCED_CONTENT = 28
     SPOILER = 29
 
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        from pydantic_core import core_schema
-
-        return core_schema.int_schema(ge=0)
-
 
 class MemoRelationType(betterproto.Enum):
     TYPE_UNSPECIFIED = 0
     REFERENCE = 1
     COMMENT = 2
-
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        from pydantic_core import core_schema
-
-        return core_schema.int_schema(ge=0)
 
 
 class ReactionType(betterproto.Enum):
@@ -154,24 +110,12 @@ class ReactionType(betterproto.Enum):
     CLOWN_FACE = 11
     QUESTION_MARK = 12
 
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        from pydantic_core import core_schema
-
-        return core_schema.int_schema(ge=0)
-
 
 class Visibility(betterproto.Enum):
     UNSPECIFIED = 0
     PRIVATE = 1
     PROTECTED = 2
     PUBLIC = 3
-
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        from pydantic_core import core_schema
-
-        return core_schema.int_schema(ge=0)
 
 
 class WorkspaceStorageSettingStorageType(betterproto.Enum):
@@ -184,12 +128,6 @@ class WorkspaceStorageSettingStorageType(betterproto.Enum):
 
     S3 = 3
     """S3 is the S3 storage type."""
-
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        from pydantic_core import core_schema
-
-        return core_schema.int_schema(ge=0)
 
 
 @dataclass(eq=False, repr=False)
@@ -330,7 +268,7 @@ class CreateUserRequest(betterproto.Message):
 @dataclass(eq=False, repr=False)
 class UpdateUserRequest(betterproto.Message):
     user: "User" = betterproto.message_field(1)
-    update_mask: "betterproto_lib_pydantic_google_protobuf.FieldMask" = (
+    update_mask: "betterproto_lib_google_protobuf.FieldMask" = (
         betterproto.message_field(2)
     )
 
@@ -374,7 +312,7 @@ class GetUserSettingRequest(betterproto.Message):
 @dataclass(eq=False, repr=False)
 class UpdateUserSettingRequest(betterproto.Message):
     setting: "UserSetting" = betterproto.message_field(1)
-    update_mask: "betterproto_lib_pydantic_google_protobuf.FieldMask" = (
+    update_mask: "betterproto_lib_google_protobuf.FieldMask" = (
         betterproto.message_field(2)
     )
 
@@ -489,13 +427,7 @@ class IdentityProvider(betterproto.Message):
 
 @dataclass(eq=False, repr=False)
 class IdentityProviderConfig(betterproto.Message):
-    oauth2_config: Optional["OAuth2Config"] = betterproto.message_field(
-        1, optional=True, group="config"
-    )
-
-    @model_validator(mode="after")
-    def check_oneof(cls, values):
-        return cls._validate_field_groups(values)
+    oauth2_config: "OAuth2Config" = betterproto.message_field(1, group="config")
 
 
 @dataclass(eq=False, repr=False)
@@ -546,7 +478,7 @@ class UpdateIdentityProviderRequest(betterproto.Message):
     identity_provider: "IdentityProvider" = betterproto.message_field(1)
     """The identityProvider to update."""
 
-    update_mask: "betterproto_lib_pydantic_google_protobuf.FieldMask" = (
+    update_mask: "betterproto_lib_google_protobuf.FieldMask" = (
         betterproto.message_field(2)
     )
     """
@@ -598,7 +530,7 @@ class ListInboxesResponse(betterproto.Message):
 @dataclass(eq=False, repr=False)
 class UpdateInboxRequest(betterproto.Message):
     inbox: "Inbox" = betterproto.message_field(1)
-    update_mask: "betterproto_lib_pydantic_google_protobuf.FieldMask" = (
+    update_mask: "betterproto_lib_google_protobuf.FieldMask" = (
         betterproto.message_field(2)
     )
 
@@ -647,97 +579,47 @@ class LinkMetadata(betterproto.Message):
 @dataclass(eq=False, repr=False)
 class Node(betterproto.Message):
     type: "NodeType" = betterproto.enum_field(1)
-    line_break_node: Optional["LineBreakNode"] = betterproto.message_field(
-        2, optional=True, group="node"
+    line_break_node: "LineBreakNode" = betterproto.message_field(2, group="node")
+    paragraph_node: "ParagraphNode" = betterproto.message_field(3, group="node")
+    code_block_node: "CodeBlockNode" = betterproto.message_field(4, group="node")
+    heading_node: "HeadingNode" = betterproto.message_field(5, group="node")
+    horizontal_rule_node: "HorizontalRuleNode" = betterproto.message_field(
+        6, group="node"
     )
-    paragraph_node: Optional["ParagraphNode"] = betterproto.message_field(
-        3, optional=True, group="node"
+    blockquote_node: "BlockquoteNode" = betterproto.message_field(7, group="node")
+    ordered_list_node: "OrderedListNode" = betterproto.message_field(8, group="node")
+    unordered_list_node: "UnorderedListNode" = betterproto.message_field(
+        9, group="node"
     )
-    code_block_node: Optional["CodeBlockNode"] = betterproto.message_field(
-        4, optional=True, group="node"
+    task_list_node: "TaskListNode" = betterproto.message_field(10, group="node")
+    math_block_node: "MathBlockNode" = betterproto.message_field(11, group="node")
+    table_node: "TableNode" = betterproto.message_field(12, group="node")
+    embedded_content_node: "EmbeddedContentNode" = betterproto.message_field(
+        13, group="node"
     )
-    heading_node: Optional["HeadingNode"] = betterproto.message_field(
-        5, optional=True, group="node"
+    text_node: "TextNode" = betterproto.message_field(14, group="node")
+    bold_node: "BoldNode" = betterproto.message_field(15, group="node")
+    italic_node: "ItalicNode" = betterproto.message_field(16, group="node")
+    bold_italic_node: "BoldItalicNode" = betterproto.message_field(17, group="node")
+    code_node: "CodeNode" = betterproto.message_field(18, group="node")
+    image_node: "ImageNode" = betterproto.message_field(19, group="node")
+    link_node: "LinkNode" = betterproto.message_field(20, group="node")
+    auto_link_node: "AutoLinkNode" = betterproto.message_field(21, group="node")
+    tag_node: "TagNode" = betterproto.message_field(22, group="node")
+    strikethrough_node: "StrikethroughNode" = betterproto.message_field(
+        23, group="node"
     )
-    horizontal_rule_node: Optional["HorizontalRuleNode"] = betterproto.message_field(
-        6, optional=True, group="node"
+    escaping_character_node: "EscapingCharacterNode" = betterproto.message_field(
+        24, group="node"
     )
-    blockquote_node: Optional["BlockquoteNode"] = betterproto.message_field(
-        7, optional=True, group="node"
+    math_node: "MathNode" = betterproto.message_field(25, group="node")
+    highlight_node: "HighlightNode" = betterproto.message_field(26, group="node")
+    subscript_node: "SubscriptNode" = betterproto.message_field(27, group="node")
+    superscript_node: "SuperscriptNode" = betterproto.message_field(28, group="node")
+    referenced_content_node: "ReferencedContentNode" = betterproto.message_field(
+        29, group="node"
     )
-    ordered_list_node: Optional["OrderedListNode"] = betterproto.message_field(
-        8, optional=True, group="node"
-    )
-    unordered_list_node: Optional["UnorderedListNode"] = betterproto.message_field(
-        9, optional=True, group="node"
-    )
-    task_list_node: Optional["TaskListNode"] = betterproto.message_field(
-        10, optional=True, group="node"
-    )
-    math_block_node: Optional["MathBlockNode"] = betterproto.message_field(
-        11, optional=True, group="node"
-    )
-    table_node: Optional["TableNode"] = betterproto.message_field(
-        12, optional=True, group="node"
-    )
-    embedded_content_node: Optional["EmbeddedContentNode"] = betterproto.message_field(
-        13, optional=True, group="node"
-    )
-    text_node: Optional["TextNode"] = betterproto.message_field(
-        14, optional=True, group="node"
-    )
-    bold_node: Optional["BoldNode"] = betterproto.message_field(
-        15, optional=True, group="node"
-    )
-    italic_node: Optional["ItalicNode"] = betterproto.message_field(
-        16, optional=True, group="node"
-    )
-    bold_italic_node: Optional["BoldItalicNode"] = betterproto.message_field(
-        17, optional=True, group="node"
-    )
-    code_node: Optional["CodeNode"] = betterproto.message_field(
-        18, optional=True, group="node"
-    )
-    image_node: Optional["ImageNode"] = betterproto.message_field(
-        19, optional=True, group="node"
-    )
-    link_node: Optional["LinkNode"] = betterproto.message_field(
-        20, optional=True, group="node"
-    )
-    auto_link_node: Optional["AutoLinkNode"] = betterproto.message_field(
-        21, optional=True, group="node"
-    )
-    tag_node: Optional["TagNode"] = betterproto.message_field(
-        22, optional=True, group="node"
-    )
-    strikethrough_node: Optional["StrikethroughNode"] = betterproto.message_field(
-        23, optional=True, group="node"
-    )
-    escaping_character_node: Optional["EscapingCharacterNode"] = (
-        betterproto.message_field(24, optional=True, group="node")
-    )
-    math_node: Optional["MathNode"] = betterproto.message_field(
-        25, optional=True, group="node"
-    )
-    highlight_node: Optional["HighlightNode"] = betterproto.message_field(
-        26, optional=True, group="node"
-    )
-    subscript_node: Optional["SubscriptNode"] = betterproto.message_field(
-        27, optional=True, group="node"
-    )
-    superscript_node: Optional["SuperscriptNode"] = betterproto.message_field(
-        28, optional=True, group="node"
-    )
-    referenced_content_node: Optional["ReferencedContentNode"] = (
-        betterproto.message_field(29, optional=True, group="node")
-    )
-    spoiler_node: Optional["SpoilerNode"] = betterproto.message_field(
-        30, optional=True, group="node"
-    )
-
-    @model_validator(mode="after")
-    def check_oneof(cls, values):
-        return cls._validate_field_groups(values)
+    spoiler_node: "SpoilerNode" = betterproto.message_field(30, group="node")
 
 
 @dataclass(eq=False, repr=False)
@@ -1015,7 +897,7 @@ class GetResourceBinaryRequest(betterproto.Message):
 @dataclass(eq=False, repr=False)
 class UpdateResourceRequest(betterproto.Message):
     resource: "Resource" = betterproto.message_field(1)
-    update_mask: "betterproto_lib_pydantic_google_protobuf.FieldMask" = (
+    update_mask: "betterproto_lib_google_protobuf.FieldMask" = (
         betterproto.message_field(2)
     )
 
@@ -1143,7 +1025,7 @@ class GetMemoRequest(betterproto.Message):
 @dataclass(eq=False, repr=False)
 class UpdateMemoRequest(betterproto.Message):
     memo: "Memo" = betterproto.message_field(1)
-    update_mask: "betterproto_lib_pydantic_google_protobuf.FieldMask" = (
+    update_mask: "betterproto_lib_google_protobuf.FieldMask" = (
         betterproto.message_field(2)
     )
 
@@ -1412,7 +1294,7 @@ class ListWebhooksResponse(betterproto.Message):
 @dataclass(eq=False, repr=False)
 class UpdateWebhookRequest(betterproto.Message):
     webhook: "Webhook" = betterproto.message_field(1)
-    update_mask: "betterproto_lib_pydantic_google_protobuf.FieldMask" = (
+    update_mask: "betterproto_lib_google_protobuf.FieldMask" = (
         betterproto.message_field(2)
     )
 
@@ -1459,19 +1341,15 @@ class WorkspaceSetting(betterproto.Message):
      Format: settings/{setting}
     """
 
-    general_setting: Optional["WorkspaceGeneralSetting"] = betterproto.message_field(
-        2, optional=True, group="value"
+    general_setting: "WorkspaceGeneralSetting" = betterproto.message_field(
+        2, group="value"
     )
-    storage_setting: Optional["WorkspaceStorageSetting"] = betterproto.message_field(
-        3, optional=True, group="value"
+    storage_setting: "WorkspaceStorageSetting" = betterproto.message_field(
+        3, group="value"
     )
-    memo_related_setting: Optional["WorkspaceMemoRelatedSetting"] = (
-        betterproto.message_field(4, optional=True, group="value")
+    memo_related_setting: "WorkspaceMemoRelatedSetting" = betterproto.message_field(
+        4, group="value"
     )
-
-    @model_validator(mode="after")
-    def check_oneof(cls, values):
-        return cls._validate_field_groups(values)
 
 
 @dataclass(eq=False, repr=False)
@@ -1694,11 +1572,11 @@ class UserServiceStub(betterproto.ServiceStub):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         return await self._unary_unary(
             "/memos.api.v1.UserService/DeleteUser",
             delete_user_request,
-            betterproto_lib_pydantic_google_protobuf.Empty,
+            betterproto_lib_google_protobuf.Empty,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -1779,11 +1657,11 @@ class UserServiceStub(betterproto.ServiceStub):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         return await self._unary_unary(
             "/memos.api.v1.UserService/DeleteUserAccessToken",
             delete_user_access_token_request,
-            betterproto_lib_pydantic_google_protobuf.Empty,
+            betterproto_lib_google_protobuf.Empty,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -1866,11 +1744,11 @@ class AuthServiceStub(betterproto.ServiceStub):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         return await self._unary_unary(
             "/memos.api.v1.AuthService/SignOut",
             sign_out_request,
-            betterproto_lib_pydantic_google_protobuf.Empty,
+            betterproto_lib_google_protobuf.Empty,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -1953,11 +1831,11 @@ class IdentityProviderServiceStub(betterproto.ServiceStub):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         return await self._unary_unary(
             "/memos.api.v1.IdentityProviderService/DeleteIdentityProvider",
             delete_identity_provider_request,
-            betterproto_lib_pydantic_google_protobuf.Empty,
+            betterproto_lib_google_protobuf.Empty,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -2006,11 +1884,11 @@ class InboxServiceStub(betterproto.ServiceStub):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         return await self._unary_unary(
             "/memos.api.v1.InboxService/DeleteInbox",
             delete_inbox_request,
-            betterproto_lib_pydantic_google_protobuf.Empty,
+            betterproto_lib_google_protobuf.Empty,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -2180,11 +2058,11 @@ class ResourceServiceStub(betterproto.ServiceStub):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         return await self._unary_unary(
             "/memos.api.v1.ResourceService/DeleteResource",
             delete_resource_request,
-            betterproto_lib_pydantic_google_protobuf.Empty,
+            betterproto_lib_google_protobuf.Empty,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -2284,11 +2162,11 @@ class MemoServiceStub(betterproto.ServiceStub):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         return await self._unary_unary(
             "/memos.api.v1.MemoService/DeleteMemo",
             delete_memo_request,
-            betterproto_lib_pydantic_google_protobuf.Empty,
+            betterproto_lib_google_protobuf.Empty,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -2335,11 +2213,11 @@ class MemoServiceStub(betterproto.ServiceStub):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         return await self._unary_unary(
             "/memos.api.v1.MemoService/RebuildMemoProperty",
             rebuild_memo_property_request,
-            betterproto_lib_pydantic_google_protobuf.Empty,
+            betterproto_lib_google_protobuf.Empty,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -2369,11 +2247,11 @@ class MemoServiceStub(betterproto.ServiceStub):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         return await self._unary_unary(
             "/memos.api.v1.MemoService/RenameMemoTag",
             rename_memo_tag_request,
-            betterproto_lib_pydantic_google_protobuf.Empty,
+            betterproto_lib_google_protobuf.Empty,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -2386,11 +2264,11 @@ class MemoServiceStub(betterproto.ServiceStub):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         return await self._unary_unary(
             "/memos.api.v1.MemoService/DeleteMemoTag",
             delete_memo_tag_request,
-            betterproto_lib_pydantic_google_protobuf.Empty,
+            betterproto_lib_google_protobuf.Empty,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -2403,11 +2281,11 @@ class MemoServiceStub(betterproto.ServiceStub):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         return await self._unary_unary(
             "/memos.api.v1.MemoService/SetMemoResources",
             set_memo_resources_request,
-            betterproto_lib_pydantic_google_protobuf.Empty,
+            betterproto_lib_google_protobuf.Empty,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -2437,11 +2315,11 @@ class MemoServiceStub(betterproto.ServiceStub):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         return await self._unary_unary(
             "/memos.api.v1.MemoService/SetMemoRelations",
             set_memo_relations_request,
-            betterproto_lib_pydantic_google_protobuf.Empty,
+            betterproto_lib_google_protobuf.Empty,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -2556,11 +2434,11 @@ class MemoServiceStub(betterproto.ServiceStub):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         return await self._unary_unary(
             "/memos.api.v1.MemoService/DeleteMemoReaction",
             delete_memo_reaction_request,
-            betterproto_lib_pydantic_google_protobuf.Empty,
+            betterproto_lib_google_protobuf.Empty,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -2643,11 +2521,11 @@ class WebhookServiceStub(betterproto.ServiceStub):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         return await self._unary_unary(
             "/memos.api.v1.WebhookService/DeleteWebhook",
             delete_webhook_request,
-            betterproto_lib_pydantic_google_protobuf.Empty,
+            betterproto_lib_google_protobuf.Empty,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -2762,7 +2640,7 @@ class UserServiceBase(ServiceBase):
 
     async def delete_user(
         self, delete_user_request: "DeleteUserRequest"
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def get_user_setting(
@@ -2787,7 +2665,7 @@ class UserServiceBase(ServiceBase):
 
     async def delete_user_access_token(
         self, delete_user_access_token_request: "DeleteUserAccessTokenRequest"
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def __rpc_list_users(
@@ -2835,7 +2713,7 @@ class UserServiceBase(ServiceBase):
 
     async def __rpc_delete_user(
         self,
-        stream: "grpclib.server.Stream[DeleteUserRequest, betterproto_lib_pydantic_google_protobuf.Empty]",
+        stream: "grpclib.server.Stream[DeleteUserRequest, betterproto_lib_google_protobuf.Empty]",
     ) -> None:
         request = await stream.recv_message()
         response = await self.delete_user(request)
@@ -2873,7 +2751,7 @@ class UserServiceBase(ServiceBase):
 
     async def __rpc_delete_user_access_token(
         self,
-        stream: "grpclib.server.Stream[DeleteUserAccessTokenRequest, betterproto_lib_pydantic_google_protobuf.Empty]",
+        stream: "grpclib.server.Stream[DeleteUserAccessTokenRequest, betterproto_lib_google_protobuf.Empty]",
     ) -> None:
         request = await stream.recv_message()
         response = await self.delete_user_access_token(request)
@@ -2921,7 +2799,7 @@ class UserServiceBase(ServiceBase):
                 self.__rpc_delete_user,
                 grpclib.const.Cardinality.UNARY_UNARY,
                 DeleteUserRequest,
-                betterproto_lib_pydantic_google_protobuf.Empty,
+                betterproto_lib_google_protobuf.Empty,
             ),
             "/memos.api.v1.UserService/GetUserSetting": grpclib.const.Handler(
                 self.__rpc_get_user_setting,
@@ -2951,7 +2829,7 @@ class UserServiceBase(ServiceBase):
                 self.__rpc_delete_user_access_token,
                 grpclib.const.Cardinality.UNARY_UNARY,
                 DeleteUserAccessTokenRequest,
-                betterproto_lib_pydantic_google_protobuf.Empty,
+                betterproto_lib_google_protobuf.Empty,
             ),
         }
 
@@ -2976,7 +2854,7 @@ class AuthServiceBase(ServiceBase):
 
     async def sign_out(
         self, sign_out_request: "SignOutRequest"
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def __rpc_get_auth_status(
@@ -3009,7 +2887,7 @@ class AuthServiceBase(ServiceBase):
 
     async def __rpc_sign_out(
         self,
-        stream: "grpclib.server.Stream[SignOutRequest, betterproto_lib_pydantic_google_protobuf.Empty]",
+        stream: "grpclib.server.Stream[SignOutRequest, betterproto_lib_google_protobuf.Empty]",
     ) -> None:
         request = await stream.recv_message()
         response = await self.sign_out(request)
@@ -3045,7 +2923,7 @@ class AuthServiceBase(ServiceBase):
                 self.__rpc_sign_out,
                 grpclib.const.Cardinality.UNARY_UNARY,
                 SignOutRequest,
-                betterproto_lib_pydantic_google_protobuf.Empty,
+                betterproto_lib_google_protobuf.Empty,
             ),
         }
 
@@ -3074,7 +2952,7 @@ class IdentityProviderServiceBase(ServiceBase):
 
     async def delete_identity_provider(
         self, delete_identity_provider_request: "DeleteIdentityProviderRequest"
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def __rpc_list_identity_providers(
@@ -3111,7 +2989,7 @@ class IdentityProviderServiceBase(ServiceBase):
 
     async def __rpc_delete_identity_provider(
         self,
-        stream: "grpclib.server.Stream[DeleteIdentityProviderRequest, betterproto_lib_pydantic_google_protobuf.Empty]",
+        stream: "grpclib.server.Stream[DeleteIdentityProviderRequest, betterproto_lib_google_protobuf.Empty]",
     ) -> None:
         request = await stream.recv_message()
         response = await self.delete_identity_provider(request)
@@ -3147,7 +3025,7 @@ class IdentityProviderServiceBase(ServiceBase):
                 self.__rpc_delete_identity_provider,
                 grpclib.const.Cardinality.UNARY_UNARY,
                 DeleteIdentityProviderRequest,
-                betterproto_lib_pydantic_google_protobuf.Empty,
+                betterproto_lib_google_protobuf.Empty,
             ),
         }
 
@@ -3164,7 +3042,7 @@ class InboxServiceBase(ServiceBase):
 
     async def delete_inbox(
         self, delete_inbox_request: "DeleteInboxRequest"
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def __rpc_list_inboxes(
@@ -3183,7 +3061,7 @@ class InboxServiceBase(ServiceBase):
 
     async def __rpc_delete_inbox(
         self,
-        stream: "grpclib.server.Stream[DeleteInboxRequest, betterproto_lib_pydantic_google_protobuf.Empty]",
+        stream: "grpclib.server.Stream[DeleteInboxRequest, betterproto_lib_google_protobuf.Empty]",
     ) -> None:
         request = await stream.recv_message()
         response = await self.delete_inbox(request)
@@ -3207,7 +3085,7 @@ class InboxServiceBase(ServiceBase):
                 self.__rpc_delete_inbox,
                 grpclib.const.Cardinality.UNARY_UNARY,
                 DeleteInboxRequest,
-                betterproto_lib_pydantic_google_protobuf.Empty,
+                betterproto_lib_google_protobuf.Empty,
             ),
         }
 
@@ -3309,7 +3187,7 @@ class ResourceServiceBase(ServiceBase):
 
     async def delete_resource(
         self, delete_resource_request: "DeleteResourceRequest"
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def __rpc_create_resource(
@@ -3359,7 +3237,7 @@ class ResourceServiceBase(ServiceBase):
 
     async def __rpc_delete_resource(
         self,
-        stream: "grpclib.server.Stream[DeleteResourceRequest, betterproto_lib_pydantic_google_protobuf.Empty]",
+        stream: "grpclib.server.Stream[DeleteResourceRequest, betterproto_lib_google_protobuf.Empty]",
     ) -> None:
         request = await stream.recv_message()
         response = await self.delete_resource(request)
@@ -3407,7 +3285,7 @@ class ResourceServiceBase(ServiceBase):
                 self.__rpc_delete_resource,
                 grpclib.const.Cardinality.UNARY_UNARY,
                 DeleteResourceRequest,
-                betterproto_lib_pydantic_google_protobuf.Empty,
+                betterproto_lib_google_protobuf.Empty,
             ),
         }
 
@@ -3435,7 +3313,7 @@ class MemoServiceBase(ServiceBase):
 
     async def delete_memo(
         self, delete_memo_request: "DeleteMemoRequest"
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def export_memos(
@@ -3450,7 +3328,7 @@ class MemoServiceBase(ServiceBase):
 
     async def rebuild_memo_property(
         self, rebuild_memo_property_request: "RebuildMemoPropertyRequest"
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def list_memo_tags(
@@ -3460,17 +3338,17 @@ class MemoServiceBase(ServiceBase):
 
     async def rename_memo_tag(
         self, rename_memo_tag_request: "RenameMemoTagRequest"
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def delete_memo_tag(
         self, delete_memo_tag_request: "DeleteMemoTagRequest"
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def set_memo_resources(
         self, set_memo_resources_request: "SetMemoResourcesRequest"
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def list_memo_resources(
@@ -3480,7 +3358,7 @@ class MemoServiceBase(ServiceBase):
 
     async def set_memo_relations(
         self, set_memo_relations_request: "SetMemoRelationsRequest"
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def list_memo_relations(
@@ -3515,7 +3393,7 @@ class MemoServiceBase(ServiceBase):
 
     async def delete_memo_reaction(
         self, delete_memo_reaction_request: "DeleteMemoReactionRequest"
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def __rpc_create_memo(
@@ -3555,7 +3433,7 @@ class MemoServiceBase(ServiceBase):
 
     async def __rpc_delete_memo(
         self,
-        stream: "grpclib.server.Stream[DeleteMemoRequest, betterproto_lib_pydantic_google_protobuf.Empty]",
+        stream: "grpclib.server.Stream[DeleteMemoRequest, betterproto_lib_google_protobuf.Empty]",
     ) -> None:
         request = await stream.recv_message()
         response = await self.delete_memo(request)
@@ -3578,7 +3456,7 @@ class MemoServiceBase(ServiceBase):
 
     async def __rpc_rebuild_memo_property(
         self,
-        stream: "grpclib.server.Stream[RebuildMemoPropertyRequest, betterproto_lib_pydantic_google_protobuf.Empty]",
+        stream: "grpclib.server.Stream[RebuildMemoPropertyRequest, betterproto_lib_google_protobuf.Empty]",
     ) -> None:
         request = await stream.recv_message()
         response = await self.rebuild_memo_property(request)
@@ -3593,7 +3471,7 @@ class MemoServiceBase(ServiceBase):
 
     async def __rpc_rename_memo_tag(
         self,
-        stream: "grpclib.server.Stream[RenameMemoTagRequest, betterproto_lib_pydantic_google_protobuf.Empty]",
+        stream: "grpclib.server.Stream[RenameMemoTagRequest, betterproto_lib_google_protobuf.Empty]",
     ) -> None:
         request = await stream.recv_message()
         response = await self.rename_memo_tag(request)
@@ -3601,7 +3479,7 @@ class MemoServiceBase(ServiceBase):
 
     async def __rpc_delete_memo_tag(
         self,
-        stream: "grpclib.server.Stream[DeleteMemoTagRequest, betterproto_lib_pydantic_google_protobuf.Empty]",
+        stream: "grpclib.server.Stream[DeleteMemoTagRequest, betterproto_lib_google_protobuf.Empty]",
     ) -> None:
         request = await stream.recv_message()
         response = await self.delete_memo_tag(request)
@@ -3609,7 +3487,7 @@ class MemoServiceBase(ServiceBase):
 
     async def __rpc_set_memo_resources(
         self,
-        stream: "grpclib.server.Stream[SetMemoResourcesRequest, betterproto_lib_pydantic_google_protobuf.Empty]",
+        stream: "grpclib.server.Stream[SetMemoResourcesRequest, betterproto_lib_google_protobuf.Empty]",
     ) -> None:
         request = await stream.recv_message()
         response = await self.set_memo_resources(request)
@@ -3625,7 +3503,7 @@ class MemoServiceBase(ServiceBase):
 
     async def __rpc_set_memo_relations(
         self,
-        stream: "grpclib.server.Stream[SetMemoRelationsRequest, betterproto_lib_pydantic_google_protobuf.Empty]",
+        stream: "grpclib.server.Stream[SetMemoRelationsRequest, betterproto_lib_google_protobuf.Empty]",
     ) -> None:
         request = await stream.recv_message()
         response = await self.set_memo_relations(request)
@@ -3679,7 +3557,7 @@ class MemoServiceBase(ServiceBase):
 
     async def __rpc_delete_memo_reaction(
         self,
-        stream: "grpclib.server.Stream[DeleteMemoReactionRequest, betterproto_lib_pydantic_google_protobuf.Empty]",
+        stream: "grpclib.server.Stream[DeleteMemoReactionRequest, betterproto_lib_google_protobuf.Empty]",
     ) -> None:
         request = await stream.recv_message()
         response = await self.delete_memo_reaction(request)
@@ -3721,7 +3599,7 @@ class MemoServiceBase(ServiceBase):
                 self.__rpc_delete_memo,
                 grpclib.const.Cardinality.UNARY_UNARY,
                 DeleteMemoRequest,
-                betterproto_lib_pydantic_google_protobuf.Empty,
+                betterproto_lib_google_protobuf.Empty,
             ),
             "/memos.api.v1.MemoService/ExportMemos": grpclib.const.Handler(
                 self.__rpc_export_memos,
@@ -3739,7 +3617,7 @@ class MemoServiceBase(ServiceBase):
                 self.__rpc_rebuild_memo_property,
                 grpclib.const.Cardinality.UNARY_UNARY,
                 RebuildMemoPropertyRequest,
-                betterproto_lib_pydantic_google_protobuf.Empty,
+                betterproto_lib_google_protobuf.Empty,
             ),
             "/memos.api.v1.MemoService/ListMemoTags": grpclib.const.Handler(
                 self.__rpc_list_memo_tags,
@@ -3751,19 +3629,19 @@ class MemoServiceBase(ServiceBase):
                 self.__rpc_rename_memo_tag,
                 grpclib.const.Cardinality.UNARY_UNARY,
                 RenameMemoTagRequest,
-                betterproto_lib_pydantic_google_protobuf.Empty,
+                betterproto_lib_google_protobuf.Empty,
             ),
             "/memos.api.v1.MemoService/DeleteMemoTag": grpclib.const.Handler(
                 self.__rpc_delete_memo_tag,
                 grpclib.const.Cardinality.UNARY_UNARY,
                 DeleteMemoTagRequest,
-                betterproto_lib_pydantic_google_protobuf.Empty,
+                betterproto_lib_google_protobuf.Empty,
             ),
             "/memos.api.v1.MemoService/SetMemoResources": grpclib.const.Handler(
                 self.__rpc_set_memo_resources,
                 grpclib.const.Cardinality.UNARY_UNARY,
                 SetMemoResourcesRequest,
-                betterproto_lib_pydantic_google_protobuf.Empty,
+                betterproto_lib_google_protobuf.Empty,
             ),
             "/memos.api.v1.MemoService/ListMemoResources": grpclib.const.Handler(
                 self.__rpc_list_memo_resources,
@@ -3775,7 +3653,7 @@ class MemoServiceBase(ServiceBase):
                 self.__rpc_set_memo_relations,
                 grpclib.const.Cardinality.UNARY_UNARY,
                 SetMemoRelationsRequest,
-                betterproto_lib_pydantic_google_protobuf.Empty,
+                betterproto_lib_google_protobuf.Empty,
             ),
             "/memos.api.v1.MemoService/ListMemoRelations": grpclib.const.Handler(
                 self.__rpc_list_memo_relations,
@@ -3817,7 +3695,7 @@ class MemoServiceBase(ServiceBase):
                 self.__rpc_delete_memo_reaction,
                 grpclib.const.Cardinality.UNARY_UNARY,
                 DeleteMemoReactionRequest,
-                betterproto_lib_pydantic_google_protobuf.Empty,
+                betterproto_lib_google_protobuf.Empty,
             ),
         }
 
@@ -3844,7 +3722,7 @@ class WebhookServiceBase(ServiceBase):
 
     async def delete_webhook(
         self, delete_webhook_request: "DeleteWebhookRequest"
-    ) -> "betterproto_lib_pydantic_google_protobuf.Empty":
+    ) -> "betterproto_lib_google_protobuf.Empty":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def __rpc_create_webhook(
@@ -3877,7 +3755,7 @@ class WebhookServiceBase(ServiceBase):
 
     async def __rpc_delete_webhook(
         self,
-        stream: "grpclib.server.Stream[DeleteWebhookRequest, betterproto_lib_pydantic_google_protobuf.Empty]",
+        stream: "grpclib.server.Stream[DeleteWebhookRequest, betterproto_lib_google_protobuf.Empty]",
     ) -> None:
         request = await stream.recv_message()
         response = await self.delete_webhook(request)
@@ -3913,7 +3791,7 @@ class WebhookServiceBase(ServiceBase):
                 self.__rpc_delete_webhook,
                 grpclib.const.Cardinality.UNARY_UNARY,
                 DeleteWebhookRequest,
-                betterproto_lib_pydantic_google_protobuf.Empty,
+                betterproto_lib_google_protobuf.Empty,
             ),
         }
 
@@ -3987,69 +3865,3 @@ class WorkspaceSettingServiceBase(ServiceBase):
                 WorkspaceSetting,
             ),
         }
-
-
-rebuild_dataclass(Activity)  # type: ignore
-rebuild_dataclass(ActivityPayload)  # type: ignore
-rebuild_dataclass(User)  # type: ignore
-rebuild_dataclass(ListUsersResponse)  # type: ignore
-rebuild_dataclass(SearchUsersResponse)  # type: ignore
-rebuild_dataclass(GetUserAvatarBinaryRequest)  # type: ignore
-rebuild_dataclass(CreateUserRequest)  # type: ignore
-rebuild_dataclass(UpdateUserRequest)  # type: ignore
-rebuild_dataclass(UpdateUserSettingRequest)  # type: ignore
-rebuild_dataclass(UserAccessToken)  # type: ignore
-rebuild_dataclass(ListUserAccessTokensResponse)  # type: ignore
-rebuild_dataclass(CreateUserAccessTokenRequest)  # type: ignore
-rebuild_dataclass(GetAuthStatusResponse)  # type: ignore
-rebuild_dataclass(IdentityProvider)  # type: ignore
-rebuild_dataclass(IdentityProviderConfig)  # type: ignore
-rebuild_dataclass(OAuth2Config)  # type: ignore
-rebuild_dataclass(ListIdentityProvidersResponse)  # type: ignore
-rebuild_dataclass(CreateIdentityProviderRequest)  # type: ignore
-rebuild_dataclass(UpdateIdentityProviderRequest)  # type: ignore
-rebuild_dataclass(Inbox)  # type: ignore
-rebuild_dataclass(ListInboxesResponse)  # type: ignore
-rebuild_dataclass(UpdateInboxRequest)  # type: ignore
-rebuild_dataclass(ParseMarkdownResponse)  # type: ignore
-rebuild_dataclass(RestoreMarkdownRequest)  # type: ignore
-rebuild_dataclass(Node)  # type: ignore
-rebuild_dataclass(ParagraphNode)  # type: ignore
-rebuild_dataclass(HeadingNode)  # type: ignore
-rebuild_dataclass(BlockquoteNode)  # type: ignore
-rebuild_dataclass(OrderedListNode)  # type: ignore
-rebuild_dataclass(UnorderedListNode)  # type: ignore
-rebuild_dataclass(TaskListNode)  # type: ignore
-rebuild_dataclass(TableNode)  # type: ignore
-rebuild_dataclass(BoldNode)  # type: ignore
-rebuild_dataclass(MemoRelation)  # type: ignore
-rebuild_dataclass(Reaction)  # type: ignore
-rebuild_dataclass(Resource)  # type: ignore
-rebuild_dataclass(CreateResourceRequest)  # type: ignore
-rebuild_dataclass(ListResourcesResponse)  # type: ignore
-rebuild_dataclass(SearchResourcesResponse)  # type: ignore
-rebuild_dataclass(UpdateResourceRequest)  # type: ignore
-rebuild_dataclass(Memo)  # type: ignore
-rebuild_dataclass(CreateMemoRequest)  # type: ignore
-rebuild_dataclass(ListMemosResponse)  # type: ignore
-rebuild_dataclass(SearchMemosResponse)  # type: ignore
-rebuild_dataclass(UpdateMemoRequest)  # type: ignore
-rebuild_dataclass(ListMemoPropertiesResponse)  # type: ignore
-rebuild_dataclass(ListMemoTagsResponse)  # type: ignore
-rebuild_dataclass(SetMemoResourcesRequest)  # type: ignore
-rebuild_dataclass(ListMemoResourcesResponse)  # type: ignore
-rebuild_dataclass(SetMemoRelationsRequest)  # type: ignore
-rebuild_dataclass(ListMemoRelationsResponse)  # type: ignore
-rebuild_dataclass(CreateMemoCommentRequest)  # type: ignore
-rebuild_dataclass(ListMemoCommentsResponse)  # type: ignore
-rebuild_dataclass(GetUserMemosStatsResponse)  # type: ignore
-rebuild_dataclass(ListMemoReactionsResponse)  # type: ignore
-rebuild_dataclass(UpsertMemoReactionRequest)  # type: ignore
-rebuild_dataclass(Webhook)  # type: ignore
-rebuild_dataclass(ListWebhooksResponse)  # type: ignore
-rebuild_dataclass(UpdateWebhookRequest)  # type: ignore
-rebuild_dataclass(WebhookRequestPayload)  # type: ignore
-rebuild_dataclass(WorkspaceSetting)  # type: ignore
-rebuild_dataclass(WorkspaceGeneralSetting)  # type: ignore
-rebuild_dataclass(WorkspaceStorageSetting)  # type: ignore
-rebuild_dataclass(SetWorkspaceSettingRequest)  # type: ignore

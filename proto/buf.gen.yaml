@@ -12,5 +12,3 @@ plugins:
     # https://github.com/danielgtaylor/python-betterproto
     out: ../src/mcp_server_memos/proto_gen
     strategy: directory
-    opt:
-      - pydantic_dataclasses

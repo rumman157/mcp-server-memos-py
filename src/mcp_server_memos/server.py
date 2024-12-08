@@ -118,7 +118,7 @@ class MemoServiceToolAdapter:
             visibility=params.visibility.to_proto(),
         )
         res = await self.memo_service.create_memo(create_memo_request=req)
-        content = f"Memo created: {res.id}"
+        content = f"Memo created: {res.name}"
         return [types.TextContent(type="text", text=content)]
 
     # get
