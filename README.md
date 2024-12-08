@@ -4,7 +4,7 @@
 [![Python Version](https://img.shields.io/pypi/pyversions/mcp-server-memos.svg)](https://pypi.org/project/mcp-server-memos/)
 [![License](https://img.shields.io/github/license/RyoJerryYu/mcp-server-memos-py.svg)](https://github.com/RyoJerryYu/mcp-server-memos-py/blob/master/LICENSE)
 
-A Python package that provides LLM models with the ability to interact with [Memos](https://github.com/usememos/memos) server through the [MCP (Model Control Protocol)](https://github.com/mcp-plugins) interface.
+A Python package that provides LLM models with the ability to interact with [Memos](https://github.com/usememos/memos) server through the [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) interface.
 
 ## 🚀 Features
 
@@ -26,9 +26,10 @@ You can include this package in your config file as bellow, just as you use othe
       "command": "uvx",
       "args": ["mcp-server-fetch"]
     },
-    "memos": {
+    "memos": { // add this to your config
       "command": "uvx",
       "args": [
+        "--prerelease=allow",
         "mcp-server-memos",
         "--host",
         "localhost",
