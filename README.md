@@ -2,7 +2,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/mcp-server-memos.svg)](https://pypi.org/project/mcp-server-memos/)
 [![Python Version](https://img.shields.io/pypi/pyversions/mcp-server-memos.svg)](https://pypi.org/project/mcp-server-memos/)
-[![License](https://img.shields.io/github/license/RyoJerryYu/mcp-server-memos-py.svg)](https://github.com/RyoJerryYu/mcp-server-memos-py/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/RyoJerryYu/mcp-server-memos-py.svg)](https://github.com/RyoJerryYu/mcp-server-memos-py/blob/master/LICENSE)
 
 A Python package that provides LLM models with the ability to interact with [Memos](https://github.com/usememos/memos) server through the [MCP (Model Control Protocol)](https://github.com/mcp-plugins) interface.
 
