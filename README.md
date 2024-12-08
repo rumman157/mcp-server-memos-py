@@ -81,6 +81,29 @@ await serve_stdio(config=config)
 | `port` | Memos server port | `8080` |
 | `token` | Access token for authentication | `""` |
 
+## 🤝 Available Tools
+
+This MCP server provides the following tools for interacting with Memos:
+
+| Tool Name | Description | Parameters |
+|-----------|-------------|------------|
+| `list_memo_tags` | List all existing memo tags | - `parent`: The parent who owns the tags (format: memos/{id}, default: "memos/-")<br>- `visibility`: Tag visibility (PUBLIC/PROTECTED/PRIVATE, default: PRIVATE) |
+| `search_memo` | Search for memos using keywords | - `key_word`: The keywords to search for in memo content |
+| `create_memo` | Create a new memo | - `content`: The content of the memo<br>- `visibility`: Memo visibility (PUBLIC/PROTECTED/PRIVATE, default: PRIVATE) |
+| `get_memo` | Get a specific memo by ID | - `name`: The name/ID of the memo (format: memos/{id}) |
+
+### Example Usage
+
+```jsonc
+{
+  "name": "create_memo",
+  "args": {
+    "content": "My new memo content",
+    "visibility": "PRIVATE"
+  }
+}
+```
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
